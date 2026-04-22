@@ -328,12 +328,13 @@ function HiddenColumnsPanel({
   hiddenStatuses: IssueStatus[];
   issues: Issue[];
 }) {
+  const { t } = useLocale();
   const viewStoreApi = useViewStoreApi();
   return (
     <div className="flex w-[240px] shrink-0 flex-col">
       <div className="mb-2 flex items-center gap-2 px-1">
         <span className="text-sm font-medium text-muted-foreground">
-          Hidden columns
+          {t.issues.messages.hiddenColumns}
         </span>
       </div>
       <div className="flex-1 space-y-0.5">
@@ -347,7 +348,7 @@ function HiddenColumnsPanel({
             >
               <div className="flex items-center gap-2">
                 <StatusIcon status={status} className="h-3.5 w-3.5" />
-                <span className="text-sm">{cfg.label}</span>
+                <span className="text-sm">{t.issues.status[status]}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs text-muted-foreground">{count}</span>
@@ -370,7 +371,7 @@ function HiddenColumnsPanel({
                       }
                     >
                       <Eye className="size-3.5" />
-                      Show column
+                      {t.issues.messages.showColumn}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

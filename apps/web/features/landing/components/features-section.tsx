@@ -79,8 +79,8 @@ const mockTimeline = [
     type: "activity" as const,
     actorType: "member" as const,
     initials: "AR",
-    name: "Alex Rivera",
-    action: "assigned to Claude",
+    name: "Alex Kim",
+    action: "Claude에게 할당됨",
     time: "3:02 PM",
     statusIcon: null,
   },
@@ -89,7 +89,7 @@ const mockTimeline = [
     actorType: "agent" as const,
     initials: "",
     name: "Claude",
-    action: "changed status from Todo to In Progress",
+    action: "Todo에서 진행 중으로 상태 변경",
     time: "3:02 PM",
     statusIcon: "in_progress" as const,
   },
@@ -97,10 +97,10 @@ const mockTimeline = [
     type: "comment" as const,
     actorType: "member" as const,
     initials: "AR",
-    name: "Alex Rivera",
+    name: "Alex Kim",
     time: "10 min",
     content:
-      "The current error responses are inconsistent across handlers — need a unified format with error codes.",
+      "현재 오류 응답이 핸들러마다 제각각입니다 — 오류 코드가 포함된 통일된 형식이 필요합니다.",
   },
   {
     type: "comment" as const,
@@ -109,16 +109,16 @@ const mockTimeline = [
     name: "Claude",
     time: "6 min",
     content:
-      "I've standardized error responses across 14 handlers. Each error now includes a code, message, and request_id. PR #43 is ready for review.",
+      "14개 핸들러의 오류 응답을 표준화했습니다. 이제 각 오류에 code, message, request_id가 포함됩니다. PR #43이 리뷰 대기 중입니다.",
   },
   {
     type: "comment" as const,
     actorType: "member" as const,
     initials: "AR",
-    name: "Alex Rivera",
+    name: "Alex Kim",
     time: "3 min",
     content:
-      "Looking good. Make sure to preserve the existing HTTP status codes — some of our frontend relies on specific codes like 409.",
+      "좋습니다. 기존 HTTP 상태 코드는 유지해 주세요 — 프런트엔드 일부가 409 같은 특정 코드에 의존합니다.",
   },
 ];
 
@@ -130,9 +130,9 @@ type Assignee = {
 };
 
 const allAssignees: Assignee[] = [
-  { type: null, id: null, name: "Unassigned" },
-  { type: "member", id: "ar", name: "Alex Rivera", initials: "AR" },
-  { type: "member", id: "sk", name: "Sarah Kim", initials: "SK" },
+  { type: null, id: null, name: "미할당" },
+  { type: "member", id: "ar", name: "Alex Kim", initials: "AR" },
+  { type: "member", id: "sk", name: "서라 김", initials: "SK" },
   { type: "agent", id: "claude", name: "Claude" },
   { type: "agent", id: "tina", name: "Tina-dev" },
 ];
@@ -163,11 +163,11 @@ function TeammatesVisual() {
       {/* Header bar */}
       <div className="flex h-10 shrink-0 items-center border-b bg-background px-4 text-sm">
         <div className="flex items-center gap-1.5 min-w-0 text-xs">
-          <span className="text-muted-foreground">Multica Demo</span>
+          <span className="text-muted-foreground">Multica 데모</span>
           <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
           <span className="text-muted-foreground">MUL-18</span>
           <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
-          <span className="truncate">Refactor API error handling middleware</span>
+          <span className="truncate">API 오류 처리 미들웨어 리팩터링</span>
         </div>
       </div>
 
@@ -175,17 +175,17 @@ function TeammatesVisual() {
         {/* Main content area */}
         <div className="flex-1 overflow-hidden px-8 py-5">
           <h3 className="text-lg font-bold leading-snug tracking-tight">
-            Refactor API error handling middleware
+            API 오류 처리 미들웨어 리팩터링
           </h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Standardize error responses across all endpoints.
+            모든 엔드포인트의 오류 응답 형식을 통일합니다.
           </p>
 
           <div className="my-4 border-t" />
 
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">Activity</h4>
-            <span className="text-xs text-muted-foreground">Subscribe</span>
+            <h4 className="text-sm font-semibold">활동</h4>
+            <span className="text-xs text-muted-foreground">구독</span>
           </div>
 
           <div className="mt-3 flex flex-col gap-2.5">
@@ -225,18 +225,18 @@ function TeammatesVisual() {
           </div>
         </div>
 
-        {/* Properties sidebar */}
+        {/* 속성 sidebar */}
         <div className="w-[220px] shrink-0 overflow-hidden border-l">
           <div className="p-4 space-y-4">
             <div>
               <div className="flex items-center gap-1 text-xs font-medium mb-2">
                 <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground rotate-90" />
-                Properties
+                속성
               </div>
               <div className="space-y-0.5 pl-2">
                 {/* Status — clickable with dropdown */}
                 <div className="relative">
-                  <PropRow label="Status">
+                  <PropRow label="상태">
                     <button
                       className="flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"
                       onClick={() => { setStatusOpen(!statusOpen); setPriorityOpen(false); }}
@@ -267,7 +267,7 @@ function TeammatesVisual() {
 
                 {/* Priority — clickable with dropdown */}
                 <div className="relative">
-                  <PropRow label="Priority">
+                  <PropRow label="우선순위">
                     <button
                       className="flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"
                       onClick={() => { setPriorityOpen(!priorityOpen); setStatusOpen(false); }}
@@ -297,7 +297,7 @@ function TeammatesVisual() {
                 </div>
 
                 {/* Assignee — clickable to toggle picker */}
-                <PropRow label="Assignee">
+                <PropRow label="담당자">
                   <button
                     className="flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"
                     onClick={() => { setPickerOpen(!pickerOpen); setStatusOpen(false); setPriorityOpen(false); }}
@@ -308,7 +308,7 @@ function TeammatesVisual() {
                         <span>{assignee.name}</span>
                       </>
                     ) : (
-                      <span className="text-muted-foreground">Unassigned</span>
+                      <span className="text-muted-foreground">미할당</span>
                     )}
                   </button>
                 </PropRow>
@@ -319,7 +319,7 @@ function TeammatesVisual() {
             {pickerOpen && (
               <div className="overflow-hidden rounded-md border bg-popover shadow-md">
                 <div className="border-b px-3 py-1.5 text-xs text-muted-foreground">
-                  Assign to...
+                  할당 대상...
                 </div>
                 <div className="p-1">
                   <button
@@ -330,12 +330,12 @@ function TeammatesVisual() {
                     onClick={() => { setAssignee(allAssignees[0]!); setPickerOpen(false); }}
                   >
                     <UserMinus className="h-3.5 w-3.5" />
-                    <span>Unassigned</span>
+                    <span>미할당</span>
                     {!assignee.type && <Check className="ml-auto h-3.5 w-3.5" />}
                   </button>
                 </div>
                 <div className="px-3 py-0.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Members</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">멤버</span>
                 </div>
                 <div className="p-1 pt-0">
                   {allAssignees.filter((a) => a.type === "member").map((m) => (
@@ -354,7 +354,7 @@ function TeammatesVisual() {
                   ))}
                 </div>
                 <div className="px-3 py-0.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Agents</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">에이전트</span>
                 </div>
                 <div className="p-1 pt-0">
                   {allAssignees.filter((a) => a.type === "agent").map((a) => (
@@ -388,12 +388,12 @@ function TeammatesVisual() {
 /* ------------------------------------------------------------------ */
 
 const mockToolCalls = [
-  { type: "thinking" as const, content: "Analyzing the error handling patterns across all 14 handler files…" },
+  { type: "thinking" as const, content: "14개 핸들러 파일의 오류 처리 패턴을 분석 중…" },
   { type: "tool_use" as const, tool: "Read", summary: "server/internal/handler/issue.go" },
   { type: "tool_result" as const, preview: "func (h *IssueHandler) Create(w http.ResponseWriter, r *http.Request) { …" },
   { type: "tool_use" as const, tool: "Edit", summary: "server/internal/handler/issue.go — replace writeJSON error calls" },
-  { type: "tool_result" as const, preview: "Updated 3 error responses to use writeError() helper" },
-  { type: "thinking" as const, content: "Now checking handler/comment.go for the same inconsistent patterns…" },
+  { type: "tool_result" as const, preview: "3개의 오류 응답을 writeError() 헬퍼로 변경함" },
+  { type: "thinking" as const, content: "같은 불일치 패턴이 있는지 handler/comment.go도 확인 중…" },
   { type: "tool_use" as const, tool: "Read", summary: "server/internal/handler/comment.go" },
   { type: "tool_result" as const, preview: "func (h *CommentHandler) Create(w http.ResponseWriter, r *http.Request) { …" },
   { type: "tool_use" as const, tool: "Bash", summary: "go test ./internal/handler/ -run TestErrorResponses" },
@@ -401,9 +401,9 @@ const mockToolCalls = [
 ];
 
 const mockTaskHistory = [
-  { status: "completed" as const, title: "Set up error response types", duration: "2m 14s" },
-  { status: "completed" as const, title: "Migrate issue handler", duration: "3m 41s" },
-  { status: "running" as const, title: "Migrate comment handler", duration: "1m 22s" },
+  { status: "completed" as const, title: "오류 응답 타입 설정", duration: "2분 14초" },
+  { status: "completed" as const, title: "이슈 핸들러 마이그레이션", duration: "3분 41초" },
+  { status: "running" as const, title: "댓글 핸들러 마이그레이션", duration: "1분 22초" },
 ];
 
 function AutonomousVisual() {
@@ -414,11 +414,11 @@ function AutonomousVisual() {
       {/* Header bar */}
       <div className="flex h-10 shrink-0 items-center border-b bg-background px-4 text-sm">
         <div className="flex items-center gap-1.5 min-w-0 text-xs">
-          <span className="text-muted-foreground">Multica Demo</span>
+          <span className="text-muted-foreground">Multica 데모</span>
           <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
           <span className="text-muted-foreground">MUL-18</span>
           <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
-          <span className="truncate">Refactor API error handling middleware</span>
+          <span className="truncate">API 오류 처리 미들웨어 리팩터링</span>
         </div>
       </div>
 
@@ -432,10 +432,10 @@ function AutonomousVisual() {
             </div>
             <div className="flex items-center gap-1.5 text-xs font-medium">
               <Loader2 className="h-3 w-3 animate-spin text-info" />
-              Agent is working
+              에이전트 작업 중
             </div>
             <span className="ml-auto text-xs tabular-nums text-muted-foreground">7m 17s</span>
-            <span className="text-xs text-muted-foreground">10 tool calls</span>
+            <span className="text-xs text-muted-foreground">10회 도구 호출</span>
           </div>
 
           {/* Tool call timeline */}
@@ -489,7 +489,7 @@ function AutonomousVisual() {
 
         {/* Task run history */}
         <div className="mt-4">
-          <span className="text-xs font-medium text-muted-foreground">Task execution history</span>
+          <span className="text-xs font-medium text-muted-foreground">작업 실행 기록</span>
           <div className="mt-2 space-y-1.5">
             {mockTaskHistory.map((task, i) => (
               <div key={i} className="flex items-center gap-2 text-xs">
@@ -512,14 +512,14 @@ function AutonomousVisual() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Skills feature visual — skill library + file browser               */
+/*  스킬 기능 시각화 — 스킬 라이브러리 + 파일 브라우저               */
 /* ------------------------------------------------------------------ */
 
 const mockSkills = [
-  { name: "Deploy to staging", description: "Run staging deploy pipeline", files: 3, selected: false },
-  { name: "Write migration", description: "Generate and validate SQL migration", files: 4, selected: true },
-  { name: "Review PR", description: "Code review with style guide checks", files: 2, selected: false },
-  { name: "Write tests", description: "Generate unit and integration tests", files: 3, selected: false },
+  { name: "스테이징 배포", description: "스테이징 배포 파이프라인 실행", files: 3, selected: false },
+  { name: "마이그레이션 작성", description: "SQL 마이그레이션 생성 및 검증", files: 4, selected: true },
+  { name: "PR 리뷰", description: "스타일 가이드 체크를 포함한 코드 리뷰", files: 2, selected: false },
+  { name: "테스트 작성", description: "단위 테스트와 통합 테스트 생성", files: 3, selected: false },
 ];
 
 const mockFileTree = [
@@ -539,7 +539,7 @@ function SkillsVisual() {
         {/* Skills list panel */}
         <div className="w-[200px] shrink-0 border-r flex flex-col">
           <div className="flex items-center justify-between border-b px-3 py-2">
-            <span className="text-xs font-semibold">Skills</span>
+            <span className="text-xs font-semibold">스킬</span>
             <button className="rounded p-0.5 text-muted-foreground hover:bg-accent transition-colors">
               <Sparkles className="h-3.5 w-3.5" />
             </button>
@@ -620,24 +620,24 @@ function SkillsVisual() {
                     {/* Frontmatter */}
                     <div className="rounded-md border bg-muted/30 p-3">
                       <div className="grid grid-cols-[80px_1fr] gap-y-1">
-                        <span className="font-medium text-muted-foreground">name</span>
+                        <span className="font-medium text-muted-foreground">이름</span>
                         <span>write-migration</span>
-                        <span className="font-medium text-muted-foreground">version</span>
+                        <span className="font-medium text-muted-foreground">버전</span>
                         <span>1.2.0</span>
-                        <span className="font-medium text-muted-foreground">author</span>
+                        <span className="font-medium text-muted-foreground">작성자</span>
                         <span>Alex Rivera</span>
                       </div>
                     </div>
                     {/* Content */}
                     <div className="space-y-2 text-muted-foreground leading-relaxed">
-                      <p className="font-semibold text-foreground">Write Migration</p>
-                      <p>Generate a SQL migration file based on the requested schema changes. Validates against the current database state and generates both up and down migrations.</p>
-                      <p className="font-medium text-foreground">Steps</p>
+                      <p className="font-semibold text-foreground">마이그레이션 작성</p>
+                      <p>요청된 스키마 변경을 바탕으로 SQL 마이그레이션 파일을 생성합니다. 현재 데이터베이스 상태를 검증하고 up/down 마이그레이션을 모두 만듭니다.</p>
+                      <p className="font-medium text-foreground">단계</p>
                       <ol className="list-decimal pl-4 space-y-0.5">
-                        <li>Analyze the current schema from migrations/</li>
-                        <li>Generate migration SQL with proper ordering</li>
-                        <li>Validate with sqlc compile</li>
-                        <li>Run tests against a fresh database</li>
+                        <li>migrations/의 현재 스키마 분석</li>
+                        <li>올바른 순서로 마이그레이션 SQL 생성</li>
+                        <li>sqlc compile로 검증</li>
+                        <li>새 데이터베이스에서 테스트 실행</li>
                       </ol>
                     </div>
                   </div>
@@ -663,20 +663,20 @@ function SkillsVisual() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Runtimes feature visual — agent dashboard with runtime status      */
+/*  런타임 feature visual — agent dashboard with runtime status      */
 /* ------------------------------------------------------------------ */
 
 const runtimeStatusConfig = {
-  idle: { label: "Idle", color: "text-muted-foreground", dot: "bg-muted-foreground" },
-  working: { label: "Working", color: "text-success", dot: "bg-success" },
-  error: { label: "Error", color: "text-destructive", dot: "bg-destructive" },
-  offline: { label: "Offline", color: "text-muted-foreground/50", dot: "bg-muted-foreground/40" },
+  idle: { label: "대기 중", color: "text-muted-foreground", dot: "bg-muted-foreground" },
+  working: { label: "작업 중", color: "text-success", dot: "bg-success" },
+  error: { label: "오류", color: "text-destructive", dot: "bg-destructive" },
+  offline: { label: "오프라인", color: "text-muted-foreground/50", dot: "bg-muted-foreground/40" },
 };
 
 const mockRuntimeList = [
-  { name: "MacBook Pro", mode: "local" as const, status: "online" as const, device: "arm64 / macOS 15.2", lastSeen: "Just now" },
-  { name: "Cloud (Anthropic)", mode: "cloud" as const, status: "online" as const, device: "api.anthropic.com", lastSeen: "Just now" },
-  { name: "Linux Server", mode: "local" as const, status: "offline" as const, device: "x86_64 / Ubuntu 24.04", lastSeen: "3h ago" },
+  { name: "MacBook Pro", mode: "local" as const, status: "online" as const, device: "arm64 / macOS 15.2", lastSeen: "방금 전" },
+  { name: "Cloud (Anthropic)", mode: "cloud" as const, status: "online" as const, device: "api.anthropic.com", lastSeen: "방금 전" },
+  { name: "Linux Server", mode: "local" as const, status: "offline" as const, device: "x86_64 / Ubuntu 24.04", lastSeen: "3시간 전" },
 ];
 
 /* Mock usage data — deterministic seed values to avoid SSR/hydration mismatch */
@@ -699,7 +699,7 @@ const mockUsageData = USAGE_SEEDS.map((s, i) => ({
 }));
 
 
-/* Heatmap color helper — same as real ActivityHeatmap */
+/* Heatmap color helper — same as real 활동Heatmap */
 function getHeatmapColor(level: number): string {
   const colors = [
     "var(--color-muted, hsl(var(--muted)))",
@@ -711,7 +711,7 @@ function getHeatmapColor(level: number): string {
   return colors[level] ?? colors[0]!;
 }
 
-/* Generate heatmap cells — simplified version of real ActivityHeatmap */
+/* Generate heatmap cells — simplified 버전 of real 활동Heatmap */
 function buildHeatmapCells() {
   const WEEKS = 13;
   const cells: { week: number; day: number; level: number; date: string }[] = [];
@@ -806,7 +806,7 @@ function RuntimesVisual() {
         {/* Runtime list */}
         <div className="w-[200px] shrink-0 border-r flex flex-col">
           <div className="flex items-center justify-between border-b px-3 py-2">
-            <span className="text-xs font-semibold">Runtimes</span>
+            <span className="text-xs font-semibold">런타임</span>
           </div>
           <div className="flex-1 overflow-hidden">
             {mockRuntimeList.map((rt, i) => (
@@ -831,7 +831,7 @@ function RuntimesVisual() {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className={cn("h-1.5 w-1.5 rounded-full", rt.status === "online" ? "bg-success" : "bg-muted-foreground/40")} />
-                    <span className="text-[10px] text-muted-foreground">{rt.status}</span>
+                    <span className="text-[10px] text-muted-foreground">{rt.status === "online" ? "온라인" : "오프라인"}</span>
                   </div>
                 </div>
               </button>
@@ -853,7 +853,7 @@ function RuntimesVisual() {
             <span className="text-sm font-semibold">{mockRuntimeList[selectedRuntime]?.name}</span>
             <div className="flex items-center gap-1.5">
               <span className={cn("h-1.5 w-1.5 rounded-full", mockRuntimeList[selectedRuntime]?.status === "online" ? "bg-success" : "bg-muted-foreground/40")} />
-              <span className="text-xs text-muted-foreground">{mockRuntimeList[selectedRuntime]?.status}</span>
+              <span className="text-xs text-muted-foreground">{mockRuntimeList[selectedRuntime]?.status === "online" ? "온라인" : "오프라인"}</span>
             </div>
             <span className="text-xs text-muted-foreground">{mockRuntimeList[selectedRuntime]?.device}</span>
           </div>
@@ -865,7 +865,7 @@ function RuntimesVisual() {
               <div className="flex items-center gap-1">
                 {(["7d", "30d", "90d"] as const).map((range) => (
                   <button
-                    key={range}
+                    key={range === "7d" ? "7일" : range === "30d" ? "30일" : "90일"}
                     onClick={() => setTimeRange(range)}
                     className={cn(
                       "rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors",
@@ -874,7 +874,7 @@ function RuntimesVisual() {
                         : "text-muted-foreground hover:bg-accent",
                     )}
                   >
-                    {range}
+                    {range === "7d" ? "7일" : range === "30d" ? "30일" : "90일"}
                   </button>
                 ))}
               </div>
@@ -883,10 +883,10 @@ function RuntimesVisual() {
             {/* Token summary cards — same as real TokenCard */}
             <div className="grid grid-cols-4 gap-2">
               {[
-                { label: "Input", value: formatTokens(totals.input) },
-                { label: "Output", value: formatTokens(totals.output) },
-                { label: "Cache Read", value: formatTokens(totals.cacheRead) },
-                { label: "Cache Write", value: formatTokens(totals.cacheWrite) },
+                { label: "입력", value: formatTokens(totals.input) },
+                { label: "출력", value: formatTokens(totals.output) },
+                { label: "캐시 읽기", value: formatTokens(totals.cacheRead) },
+                { label: "캐시 쓰기", value: formatTokens(totals.cacheWrite) },
               ].map((card) => (
                 <div key={card.label} className="rounded-lg border px-3 py-2">
                   <div className="text-[10px] text-muted-foreground">{card.label}</div>
@@ -897,12 +897,12 @@ function RuntimesVisual() {
 
             {/* Charts row — Heatmap + Hourly bar */}
             <div className="grid grid-cols-2 gap-3">
-              {/* Activity Heatmap — mirrors real ActivityHeatmap */}
+              {/* 활동 Heatmap — mirrors real 활동Heatmap */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">Activity</h4>
+                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">활동</h4>
                 <div className="overflow-x-auto">
                   <svg width={svgWidth} height={svgHeight} className="block">
-                    {["", "Mon", "", "Wed", "", "Fri", ""].map((label, i) =>
+                    {["", "월", "", "수", "", "금", ""].map((label, i) =>
                       label ? (
                         <text key={i} x={0} y={12 + i * (CELL_SIZE + CELL_GAP) + CELL_SIZE - 2} className="fill-muted-foreground" fontSize={8}>
                           {label}
@@ -923,20 +923,20 @@ function RuntimesVisual() {
                   </svg>
                 </div>
                 <div className="mt-1.5 flex items-center justify-end gap-1 text-[9px] text-muted-foreground">
-                  <span>Less</span>
+                  <span>적음</span>
                   {[0, 1, 2, 3, 4].map((level) => (
                     <div key={level} className="h-[8px] w-[8px] rounded-[2px]" style={{ backgroundColor: getHeatmapColor(level) }} />
                   ))}
-                  <span>More</span>
+                  <span>많음</span>
                 </div>
               </div>
 
-              {/* Daily Cost — SVG bar chart mirroring real DailyCostChart */}
+              {/* 일일 비용 — SVG bar chart mirroring real DailyCostChart */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">Daily Cost</h4>
+                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">일일 비용</h4>
                 <DailyCostBars data={mockUsageData.slice(-14)} />
                 <div className="mt-1.5 flex justify-between text-[8px] text-muted-foreground">
-                  <span>Mar 18</span><span>Mar 25</span><span>Mar 31</span>
+                  <span>3/18</span><span>3/25</span><span>3/31</span>
                 </div>
               </div>
             </div>

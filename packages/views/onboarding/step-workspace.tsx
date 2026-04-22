@@ -7,6 +7,7 @@ import { Label } from "@multica/ui/components/ui/label";
 import { Button } from "@multica/ui/components/ui/button";
 import { Card, CardContent } from "@multica/ui/components/ui/card";
 import { useCreateWorkspace } from "@multica/core/workspace/mutations";
+import { useLocale } from "@multica/core";
 import {
   WORKSPACE_SLUG_CONFLICT_ERROR,
   WORKSPACE_SLUG_FORMAT_ERROR,
@@ -16,6 +17,7 @@ import {
 } from "../workspace/slug";
 
 export function StepWorkspace({ onNext }: { onNext: () => void }) {
+  const { t } = useLocale();
   const createWorkspace = useCreateWorkspace();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -25,9 +27,9 @@ export function StepWorkspace({ onNext }: { onNext: () => void }) {
 
   const slugValidationError =
     slug.length > 0 && !WORKSPACE_SLUG_REGEX.test(slug)
-      ? WORKSPACE_SLUG_FORMAT_ERROR
+      ? t.onboarding.slugFormatError
       : null;
-  const slugError = slugValidationError ?? slugServerError;
+  const slugError = slugValidationError ?? (slugServerError ? t.onboarding.slugConflictError : null);
 
   const canSubmit =
     name.trim().length > 0 && slug.trim().length > 0 && !slugError;
@@ -55,10 +57,10 @@ export function StepWorkspace({ onNext }: { onNext: () => void }) {
         onError: (error) => {
           if (isWorkspaceSlugConflict(error)) {
             setSlugServerError(WORKSPACE_SLUG_CONFLICT_ERROR);
-            toast.error("Choose a different workspace URL");
+            toast.error(t.onboarding.chooseDifferentUrl);
             return;
           }
-          toast.error("Failed to create workspace");
+          toast.error(t.onboarding.failedCreateWorkspace);
         },
       },
     );
@@ -68,28 +70,28 @@ export function StepWorkspace({ onNext }: { onNext: () => void }) {
     <div className="flex w-full max-w-md flex-col items-center gap-8">
       <div className="text-center">
         <h1 className="text-3xl font-semibold tracking-tight">
-          Welcome to Multica
+          {t.onboarding.welcome}
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Create your workspace to start building with AI agents.
+          {t.onboarding.welcomeDesc}
         </p>
       </div>
 
       <Card className="w-full">
         <CardContent className="space-y-4 pt-6">
           <div className="space-y-1.5">
-            <Label>Workspace Name</Label>
+            <Label>{t.onboarding.workspaceName}</Label>
             <Input
               autoFocus
               type="text"
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="My Team"
+              placeholder={t.onboarding.workspaceNamePlaceholder}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
             />
           </div>
           <div className="space-y-1.5">
-            <Label>Workspace URL</Label>
+            <Label>{t.onboarding.workspaceUrl}</Label>
             <div className="flex items-center gap-0 rounded-md border bg-background focus-within:ring-2 focus-within:ring-ring">
               <span className="pl-3 text-sm text-muted-foreground select-none">
                 multica.ai/
@@ -98,7 +100,7 @@ export function StepWorkspace({ onNext }: { onNext: () => void }) {
                 type="text"
                 value={slug}
                 onChange={(e) => handleSlugChange(e.target.value)}
-                placeholder="my-team"
+                placeholder={t.onboarding.workspaceUrlPlaceholder}
                 className="border-0 shadow-none focus-visible:ring-0"
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
               />
@@ -116,7 +118,7 @@ export function StepWorkspace({ onNext }: { onNext: () => void }) {
         onClick={handleCreate}
         disabled={createWorkspace.isPending || !canSubmit}
       >
-        {createWorkspace.isPending ? "Creating..." : "Create Workspace"}
+        {createWorkspace.isPending ? t.onboarding.creating : t.onboarding.createWorkspace}
       </Button>
     </div>
   );

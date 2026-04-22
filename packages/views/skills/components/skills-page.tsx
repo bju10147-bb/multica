@@ -35,7 +35,7 @@ import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { api } from "@multica/core/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
+import { useWorkspaceId, useLocale } from "@multica/core";
 import { skillListOptions, workspaceKeys } from "@multica/core/workspace/queries";
 
 import { PageHeader } from "../../layout/page-header";
@@ -55,6 +55,7 @@ function CreateSkillDialog({
   onCreate: (data: CreateSkillRequest) => Promise<void>;
   onImport: (url: string) => Promise<void>;
 }) {
+  const { t } = useLocale();
   const [tab, setTab] = useState<"create" | "import">("create");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -97,9 +98,9 @@ function CreateSkillDialog({
     <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Workspace Skill</DialogTitle>
+          <DialogTitle>{t.skills.addWorkspaceSkill}</DialogTitle>
           <DialogDescription>
-            Create a new skill or import from ClawHub / Skills.sh. Workspace skills are shared with your team and automatically injected into agent runs.
+            {t.skills.addWorkspaceSkillDesc}
           </DialogDescription>
         </DialogHeader>
 
@@ -107,34 +108,34 @@ function CreateSkillDialog({
           <TabsList className="w-full">
             <TabsTrigger value="create" className="flex-1">
               <Plus className="mr-1.5 h-3 w-3" />
-              Create
+              {t.skills.tabs.create}
             </TabsTrigger>
             <TabsTrigger value="import" className="flex-1">
               <Download className="mr-1.5 h-3 w-3" />
-              Import
+              {t.skills.tabs.import}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="create" className="space-y-4 mt-4 min-h-[180px]">
             <div>
-              <Label className="text-xs text-muted-foreground">Name</Label>
+              <Label className="text-xs text-muted-foreground">{t.skills.form.name}</Label>
               <Input
                 autoFocus
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Code Review, Bug Triage"
+                placeholder={t.skills.form.namePlaceholder}
                 className="mt-1"
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
               />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">Description</Label>
+              <Label className="text-xs text-muted-foreground">{t.skills.form.description}</Label>
               <Input
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Brief description of what this skill does"
+                placeholder={t.skills.form.descriptionPlaceholder}
                 className="mt-1"
               />
             </div>
@@ -142,13 +143,13 @@ function CreateSkillDialog({
 
           <TabsContent value="import" className="space-y-4 mt-4 min-h-[180px]">
             <div>
-              <Label className="text-xs text-muted-foreground">Skill URL</Label>
+              <Label className="text-xs text-muted-foreground">{t.skills.form.skillUrl}</Label>
               <Input
                 autoFocus
                 type="text"
                 value={importUrl}
                 onChange={(e) => { setImportUrl(e.target.value); setImportError(""); }}
-                placeholder="Paste a skill URL..."
+                placeholder={t.skills.form.skillUrlPlaceholder}
                 className="mt-1"
                 onKeyDown={(e) => e.key === "Enter" && handleImport()}
               />
@@ -156,7 +157,7 @@ function CreateSkillDialog({
 
             {/* Supported sources — highlight on detection */}
             <div>
-              <p className="text-xs text-muted-foreground mb-2">Supported sources</p>
+              <p className="text-xs text-muted-foreground mb-2">{t.skills.form.supportedSources}</p>
               <div className="grid grid-cols-2 gap-2">
                 <div className={`rounded-lg border px-3 py-2.5 transition-colors ${
                   detectedSource === "clawhub"
@@ -191,23 +192,23 @@ function CreateSkillDialog({
         </Tabs>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="ghost" onClick={onClose}>{t.skills.actions.cancel}</Button>
           {tab === "create" ? (
             <Button onClick={handleCreate} disabled={loading || !name.trim()}>
-              {loading ? "Creating..." : "Create"}
+              {loading ? t.skills.actions.creating : t.skills.actions.create}
             </Button>
           ) : (
             <Button onClick={handleImport} disabled={loading || !importUrl.trim()}>
               {loading ? (
                 detectedSource === "clawhub"
-                  ? "Importing from ClawHub..."
+                  ? t.skills.import.importingFrom.replace("{source}", "ClawHub")
                   : detectedSource === "skills.sh"
-                    ? "Importing from Skills.sh..."
-                    : "Importing..."
+                    ? t.skills.import.importingFrom.replace("{source}", "Skills.sh")
+                    : t.skills.import.importing
               ) : (
                 <>
                   <Download className="mr-1.5 h-3 w-3" />
-                  Import
+                  {t.skills.tabs.import}
                 </>
               )}
             </Button>
@@ -231,6 +232,7 @@ function SkillListItem({
   isSelected: boolean;
   onClick: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <button
       onClick={onClick}
@@ -251,7 +253,7 @@ function SkillListItem({
       </div>
       {(skill.files?.length ?? 0) > 0 && (
         <Badge variant="secondary">
-          {skill.files.length} file{skill.files.length !== 1 ? "s" : ""}
+          {t.skills.fileCount.replace("{n}", skill.files.length.toString())}
         </Badge>
       )}
     </button>
@@ -290,6 +292,7 @@ function AddFileDialog({
   onClose: () => void;
   onAdd: (path: string) => void;
 }) {
+  const { t } = useLocale();
   const [path, setPath] = useState("");
   const duplicate = existingPaths.includes(path.trim());
 
@@ -297,19 +300,19 @@ function AddFileDialog({
     <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent className="max-w-sm" showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle className="text-sm font-semibold">Add File</DialogTitle>
+          <DialogTitle className="text-sm font-semibold">{t.skills.actions.addFileTitle}</DialogTitle>
           <DialogDescription className="text-xs">
-            Add a supporting file to this skill.
+            {t.skills.actions.addFileDesc}
           </DialogDescription>
         </DialogHeader>
         <div>
-          <Label className="text-xs text-muted-foreground">File Path</Label>
+          <Label className="text-xs text-muted-foreground">{t.skills.actions.filePath}</Label>
           <Input
             autoFocus
             type="text"
             value={path}
             onChange={(e) => setPath(e.target.value)}
-            placeholder="e.g. templates/review.md"
+            placeholder={t.skills.actions.filePathPlaceholder}
             className="mt-1 font-mono text-sm"
             onKeyDown={(e) => {
               if (e.key === "Enter" && path.trim() && !duplicate) {
@@ -319,16 +322,16 @@ function AddFileDialog({
             }}
           />
           {duplicate && (
-            <p className="mt-1 text-xs text-destructive">File already exists</p>
+            <p className="mt-1 text-xs text-destructive">{t.skills.actions.fileAlreadyExists}</p>
           )}
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="ghost" onClick={onClose}>{t.skills.actions.cancel}</Button>
           <Button
             disabled={!path.trim() || duplicate}
             onClick={() => { onAdd(path.trim()); onClose(); }}
           >
-            Add
+            {t.skills.actions.addFile}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -447,14 +450,14 @@ function SkillDetail({
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="h-8 text-sm font-medium"
-              placeholder="Skill name"
+              placeholder={t.skills.form.name}
             />
             <Input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="h-8 text-sm"
-              placeholder="Description"
+              placeholder={t.skills.form.description}
             />
           </div>
         </div>
@@ -462,7 +465,7 @@ function SkillDetail({
           {isDirty && (
             <Button onClick={handleSave} disabled={saving || !name.trim()} size="xs">
               <Save className="h-3 w-3" />
-              {saving ? "Saving..." : "Save"}
+              {saving ? t.skills.actions.saving : t.skills.actions.save}
             </Button>
           )}
           <Tooltip>
@@ -478,7 +481,7 @@ function SkillDetail({
                 </Button>
               }
             />
-            <TooltipContent>Delete skill</TooltipContent>
+            <TooltipContent>{t.skills.actions.delete}</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -489,7 +492,7 @@ function SkillDetail({
         <div className="w-52 shrink-0 border-r flex flex-col">
           <div className="flex h-10 items-center justify-between border-b px-3">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Files
+              {t.skills.files}
             </span>
             <div className="flex items-center gap-1">
               <Tooltip>
@@ -505,7 +508,7 @@ function SkillDetail({
                     </Button>
                   }
                 />
-                <TooltipContent>Add file</TooltipContent>
+                <TooltipContent>{t.skills.actions.addFile}</TooltipContent>
               </Tooltip>
               {selectedPath !== SKILL_MD && (
                 <Tooltip>
@@ -521,7 +524,7 @@ function SkillDetail({
                       </Button>
                     }
                   />
-                  <TooltipContent>Delete file</TooltipContent>
+                  <TooltipContent>{t.skills.actions.delete}</TooltipContent>
                 </Tooltip>
               )}
             </div>
@@ -582,15 +585,15 @@ function SkillDetail({
                 <AlertCircle className="h-5 w-5 text-destructive" />
               </div>
               <DialogHeader className="flex-1 gap-1">
-                <DialogTitle className="text-sm font-semibold">Delete skill?</DialogTitle>
+                <DialogTitle className="text-sm font-semibold">{t.skills.actions.deleteSkillTitle}</DialogTitle>
                 <DialogDescription className="text-xs">
-                  This will permanently delete &quot;{skill.name}&quot; and remove it from all agents.
+                  {t.skills.actions.deleteSkillDesc.replace("{name}", skill.name)}
                 </DialogDescription>
               </DialogHeader>
             </div>
             <DialogFooter>
               <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
-                Cancel
+                {t.skills.actions.cancel}
               </Button>
               <Button
                 variant="destructive"
@@ -599,7 +602,7 @@ function SkillDetail({
                   onDelete(skill.id);
                 }}
               >
-                Delete
+                {t.skills.actions.delete}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -614,6 +617,7 @@ function SkillDetail({
 // ---------------------------------------------------------------------------
 
 export default function SkillsPage() {
+  const { t } = useLocale();
   const isLoading = useAuthStore((s) => s.isLoading);
   const qc = useQueryClient();
   const wsId = useWorkspaceId();
@@ -634,23 +638,23 @@ export default function SkillsPage() {
     const skill = await api.createSkill(data);
     qc.invalidateQueries({ queryKey: workspaceKeys.skills(wsId) });
     setSelectedId(skill.id);
-    toast.success("Skill created");
+    toast.success(t.skills.messages.created);
   };
 
   const handleImport = async (url: string) => {
     const skill = await api.importSkill({ url });
     qc.invalidateQueries({ queryKey: workspaceKeys.skills(wsId) });
     setSelectedId(skill.id);
-    toast.success("Skill imported");
+    toast.success(t.skills.messages.imported);
   };
 
   const handleUpdate = async (id: string, data: UpdateSkillRequest) => {
     try {
       await api.updateSkill(id, data);
       qc.invalidateQueries({ queryKey: workspaceKeys.skills(wsId) });
-      toast.success("Skill saved");
+      toast.success(t.skills.messages.saved);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to save skill");
+      toast.error(e instanceof Error ? e.message : t.skills.messages.failedToSave);
       throw e;
     }
   };
@@ -663,9 +667,9 @@ export default function SkillsPage() {
         setSelectedId(remaining[0]?.id ?? "");
       }
       qc.invalidateQueries({ queryKey: workspaceKeys.skills(wsId) });
-      toast.success("Skill deleted");
+      toast.success(t.skills.messages.deleted);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to delete skill");
+      toast.error(e instanceof Error ? e.message : t.skills.messages.failedToDelete);
     }
   };
 
@@ -726,7 +730,7 @@ export default function SkillsPage() {
         {/* Left column — skill list */}
         <div className="overflow-y-auto h-full border-r">
           <PageHeader className="justify-between">
-            <h1 className="text-sm font-semibold">Skills</h1>
+            <h1 className="text-sm font-semibold">{t.skills.title}</h1>
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -739,15 +743,15 @@ export default function SkillsPage() {
                   </Button>
                 }
               />
-              <TooltipContent side="bottom">Create skill</TooltipContent>
+              <TooltipContent side="bottom">{t.skills.createSkill}</TooltipContent>
             </Tooltip>
           </PageHeader>
           {skills.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-4 py-12">
               <Sparkles className="h-8 w-8 text-muted-foreground/40" />
-              <p className="mt-3 text-sm text-muted-foreground">No workspace skills yet</p>
+              <p className="mt-3 text-sm text-muted-foreground">{t.skills.empty.noSkills}</p>
               <p className="mt-1 text-xs text-muted-foreground text-center max-w-[280px]">
-                Workspace skills are shared across your team and injected into agent runs. Skills already installed in your local runtime are used automatically.
+                {t.skills.empty.desc}
               </p>
               <Button
                 onClick={() => setShowCreate(true)}
@@ -755,7 +759,7 @@ export default function SkillsPage() {
                 className="mt-3"
               >
                 <Plus className="h-3 w-3" />
-                Create Skill
+                {t.skills.createSkill}
               </Button>
             </div>
           ) : (
@@ -788,9 +792,9 @@ export default function SkillsPage() {
           ) : (
             <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
               <Sparkles className="h-10 w-10 text-muted-foreground/30" />
-              <p className="mt-3 text-sm">Select a skill to view details</p>
+              <p className="mt-3 text-sm">{t.skills.empty.selectSkill}</p>
               <p className="mt-1 text-xs text-center max-w-[260px]">
-                Workspace skills supplement your local skills and are shared across the team.
+                {t.skills.empty.selectSkillDesc}
               </p>
               <Button
                 onClick={() => setShowCreate(true)}
@@ -798,7 +802,7 @@ export default function SkillsPage() {
                 className="mt-3"
               >
                 <Plus className="h-3 w-3" />
-                Create Skill
+                {t.skills.createSkill}
               </Button>
             </div>
           )}

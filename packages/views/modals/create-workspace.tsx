@@ -128,28 +128,27 @@ export function CreateWorkspaceModal({ onClose }: { onClose: () => void }) {
         <div className="flex w-full max-w-md flex-col items-center gap-6">
           <div className="text-center">
             <DialogTitle className="text-2xl font-semibold">
-              Create a new workspace
+              새 워크스페이스 만들기
             </DialogTitle>
             <DialogDescription className="mt-2">
-              Workspaces are shared environments where teams can work on
-              projects and issues.
+              워크스페이스는 팀이 프로젝트와 이슈를 함께 진행하는 공유 작업 공간입니다.
             </DialogDescription>
           </div>
 
           <Card className="w-full">
             <CardContent className="space-y-4 pt-6">
               <div className="space-y-1.5">
-                <Label>Workspace Name</Label>
+                <Label>워크스페이스 이름</Label>
                 <Input
                   autoFocus
                   type="text"
                   value={name}
                   onChange={(e) => handleNameChange(e.target.value)}
-                  placeholder="My Workspace"
+                  placeholder="내 워크스페이스"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label>Workspace URL</Label>
+                <Label>워크스페이스 URL</Label>
                 <div className="flex items-center gap-0 rounded-md border bg-background focus-within:ring-2 focus-within:ring-ring">
                   <span className="pl-3 text-sm text-muted-foreground select-none">
                     multica.ai/
@@ -176,7 +175,7 @@ export function CreateWorkspaceModal({ onClose }: { onClose: () => void }) {
             onClick={handleCreate}
             disabled={createWorkspace.isPending || !canSubmit}
           >
-            {createWorkspace.isPending ? "Creating..." : "Create workspace"}
+            {createWorkspace.isPending ? "생성 중..." : "워크스페이스 만들기"}
           </Button>
         </div>
       </DialogContent>

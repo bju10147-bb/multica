@@ -36,6 +36,7 @@ import { useFileUpload } from "@multica/core/hooks/use-file-upload";
 import { api } from "@multica/core/api";
 import { ReplyInput } from "./reply-input";
 import type { TimelineEntry, Attachment } from "@multica/core/types";
+import { useLocale } from "@multica/core";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -69,21 +70,22 @@ function DeleteCommentDialog({
   onConfirm: () => void;
   hasReplies?: boolean;
 }) {
+  const { t } = useLocale();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete comment</AlertDialogTitle>
+          <AlertDialogTitle>{t.issueDetail.comment.deleteTitle}</AlertDialogTitle>
           <AlertDialogDescription>
             {hasReplies
-              ? "This comment and all its replies will be permanently deleted. This cannot be undone."
-              : "This comment will be permanently deleted. This cannot be undone."}
+              ? t.issueDetail.comment.deleteDescWithReplies
+              : t.issueDetail.comment.deleteDesc}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t.issueDetail.comment.cancel}</AlertDialogCancel>
           <AlertDialogAction variant="destructive" onClick={onConfirm}>
-            Delete
+            {t.issueDetail.comment.delete}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -161,6 +163,7 @@ function CommentRow({
   const isOwn = entry.actor_type === "member" && entry.actor_id === currentUserId;
   const isTemp = entry.id.startsWith("temp-");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { t } = useLocale();
 
   const startEdit = () => {
     cancelledRef.current = false;
@@ -186,7 +189,7 @@ function CommentRow({
       await onEdit(entry.id, trimmed);
       setEditing(false);
     } catch {
-      toast.error("Failed to update comment");
+      toast.error(t.issueDetail.comment.failedToUpdate);
     }
   };
 
@@ -231,22 +234,22 @@ function CommentRow({
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => {
                 copyMarkdown(entry.content ?? "");
-                toast.success("Copied");
+                toast.success(t.issueDetail.comment.copied);
               }}>
                 <Copy className="h-3.5 w-3.5" />
-                Copy
+                {t.issueDetail.comment.copy}
               </DropdownMenuItem>
               {isOwn && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={startEdit}>
                     <Pencil className="h-3.5 w-3.5" />
-                    Edit
+                    {t.issueDetail.comment.edit}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setConfirmDelete(true)} variant="destructive">
                     <Trash2 className="h-3.5 w-3.5" />
-                    Delete
+                    {t.issueDetail.comment.delete}
                   </DropdownMenuItem>
                 </>
               )}
@@ -271,7 +274,7 @@ function CommentRow({
             <ContentEditor
               ref={editEditorRef}
               defaultValue={entry.content ?? ""}
-              placeholder="Edit comment..."
+              placeholder={t.issueDetail.comment.editPlaceholder}
               onSubmit={saveEdit}
               onUploadFile={(file) => uploadWithToast(file, { issueId })}
               debounceMs={100}
@@ -283,8 +286,8 @@ function CommentRow({
               onSelect={(file) => editEditorRef.current?.uploadFile(file)}
             />
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="ghost" onClick={cancelEdit}>Cancel</Button>
-              <Button size="sm" variant="outline" onClick={saveEdit}>Save</Button>
+              <Button size="sm" variant="ghost" onClick={cancelEdit}>{t.issueDetail.comment.cancel}</Button>
+              <Button size="sm" variant="outline" onClick={saveEdit}>{t.issueDetail.comment.save}</Button>
             </div>
           </div>
           {isDragOver && <FileDropOverlay />}
@@ -340,6 +343,7 @@ function CommentCard({
   const isOwn = entry.actor_type === "member" && entry.actor_id === currentUserId;
   const isTemp = entry.id.startsWith("temp-");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { t } = useLocale();
 
   const startEdit = () => {
     cancelledRef.current = false;
@@ -365,7 +369,7 @@ function CommentCard({
       await onEdit(entry.id, trimmed);
       setEditing(false);
     } catch {
-      toast.error("Failed to update comment");
+      toast.error(t.issueDetail.comment.failedToUpdate);
     }
   };
 
@@ -421,7 +425,7 @@ function CommentCard({
             )}
             {!open && replyCount > 0 && (
               <span className="shrink-0 text-xs text-muted-foreground">
-                {replyCount} {replyCount === 1 ? "reply" : "replies"}
+                {replyCount} {replyCount === 1 ? t.issueDetail.comment.reply : t.issueDetail.comment.replies}
               </span>
             )}
 
@@ -442,22 +446,22 @@ function CommentCard({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => {
                     copyMarkdown(entry.content ?? "");
-                    toast.success("Copied");
+                    toast.success(t.issueDetail.comment.copied);
                   }}>
                     <Copy className="h-3.5 w-3.5" />
-                    Copy
+                    {t.issueDetail.comment.copy}
                   </DropdownMenuItem>
                   {isOwn && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={startEdit}>
                         <Pencil className="h-3.5 w-3.5" />
-                        Edit
+                        {t.issueDetail.comment.edit}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => setConfirmDelete(true)} variant="destructive">
                         <Trash2 className="h-3.5 w-3.5" />
-                        Delete
+                        {t.issueDetail.comment.delete}
                       </DropdownMenuItem>
                     </>
                   )}
@@ -488,7 +492,7 @@ function CommentCard({
                   <ContentEditor
                     ref={editEditorRef}
                     defaultValue={entry.content ?? ""}
-                    placeholder="Edit comment..."
+                    placeholder={t.issueDetail.comment.editPlaceholder}
                     onSubmit={saveEdit}
                     onUploadFile={(file) => uploadWithToast(file, { issueId })}
                     debounceMs={100}
@@ -500,8 +504,8 @@ function CommentCard({
                     onSelect={(file) => editEditorRef.current?.uploadFile(file)}
                   />
                   <div className="flex items-center gap-2">
-                    <Button size="sm" variant="ghost" onClick={cancelEdit}>Cancel</Button>
-                    <Button size="sm" variant="outline" onClick={saveEdit}>Save</Button>
+                    <Button size="sm" variant="ghost" onClick={cancelEdit}>{t.issueDetail.comment.cancel}</Button>
+                    <Button size="sm" variant="outline" onClick={saveEdit}>{t.issueDetail.comment.save}</Button>
                   </div>
                 </div>
                 {parentDragOver && <FileDropOverlay />}
@@ -544,7 +548,7 @@ function CommentCard({
           <div className="border-t border-border/50 px-4 py-2.5">
             <ReplyInput
               issueId={issueId}
-              placeholder="Leave a reply..."
+              placeholder={t.issueDetail.comment.replyPlaceholder}
               size="sm"
               avatarType="member"
               avatarId={currentUserId ?? ""}

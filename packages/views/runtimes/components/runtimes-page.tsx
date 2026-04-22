@@ -11,7 +11,7 @@ import {
 } from "@multica/ui/components/ui/resizable";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
+import { useWorkspaceId, useLocale } from "@multica/core";
 import { runtimeListOptions, runtimeKeys } from "@multica/core/runtimes/queries";
 import { useUpdatableRuntimeIds } from "@multica/core/runtimes/hooks";
 import { useWSEvent } from "@multica/core/realtime";
@@ -26,6 +26,7 @@ interface RuntimesPageProps {
 }
 
 export default function RuntimesPage({ topSlot }: RuntimesPageProps = {}) {
+  const { t } = useLocale();
   const isLoading = useAuthStore((s) => s.isLoading);
   const wsId = useWorkspaceId();
   const qc = useQueryClient();
@@ -126,7 +127,7 @@ export default function RuntimesPage({ topSlot }: RuntimesPageProps = {}) {
           ) : (
             <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
               <Server className="h-10 w-10 text-muted-foreground/30" />
-              <p className="mt-3 text-sm">Select a runtime to view details</p>
+              <p className="mt-3 text-sm">{t.runtimes.selectRuntime}</p>
             </div>
           )}
         </ResizablePanel>

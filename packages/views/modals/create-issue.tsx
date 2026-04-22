@@ -135,7 +135,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
               <div className="flex items-center justify-center size-5 rounded-full bg-emerald-500/15 text-emerald-500">
                 <Check className="size-3" />
               </div>
-              <span className="text-sm font-medium">Issue created</span>
+              <span className="text-sm font-medium">이슈가 생성되었습니다</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground ml-7">
               <StatusIcon status={issue.status} className="size-3.5 shrink-0" />
@@ -199,7 +199,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
             onMoveToTodo={() => {
               updateIssueMutation.mutate(
                 { id: backlogHintIssueId, status: "todo" },
-                { onError: () => toast.error("Failed to update status") },
+                {onError: () => toast.error("상태 업데이트에 실패했습니다") }
               );
               setBacklogHintIssueId(null);
               onClose();
@@ -207,7 +207,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
           />
         ) : (
           <>
-            <DialogTitle className="sr-only">New Issue</DialogTitle>
+            <DialogTitle className="sr-only">새 이슈</DialogTitle>
 
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-3 pb-2 shrink-0">
@@ -220,7 +220,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
                     <ChevronRight className="size-3 text-muted-foreground/50" />
                   </>
                 )}
-                <span className="font-medium">{data?.parent_issue_id ? "New sub-issue" : "New issue"}</span>
+                <span className="font-medium">{data?.parent_issue_id ? "새 하위 이슈" : "새 이슈"}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Tooltip>
@@ -257,7 +257,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
               <TitleEditor
                 autoFocus
                 defaultValue={draft.title}
-                placeholder="Issue title"
+                placeholder="이슈 제목"
                 className="text-lg font-semibold"
                 onChange={(v) => updateTitle(v)}
                 onSubmit={handleSubmit}
@@ -330,7 +330,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
                 onSelect={(file) => descEditorRef.current?.uploadFile(file)}
               />
               <Button size="sm" onClick={handleSubmit} disabled={!title.trim() || submitting}>
-                {submitting ? "Creating..." : "Create Issue"}
+                {submitting ? "생성 중..." : "이슈 생성"}
               </Button>
             </div>
           </>

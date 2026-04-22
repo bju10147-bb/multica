@@ -14,6 +14,7 @@ import {
   SignalHigh,
   SlidersHorizontal,
 } from "lucide-react";
+import { useLocale } from "@multica/core";
 import { Button } from "@multica/ui/components/ui/button";
 import {
   DropdownMenu,
@@ -99,17 +100,8 @@ function useIssueCounts(allIssues: Issue[]) {
 // Scope config
 // ---------------------------------------------------------------------------
 
-const SCOPES: { value: MyIssuesScope; label: string; description: string }[] = [
-  { value: "assigned", label: "Assigned", description: "Issues assigned to me" },
-  { value: "created", label: "Created", description: "Issues I created" },
-  { value: "agents", label: "My Agents", description: "Issues assigned to my agents" },
-];
-
-// ---------------------------------------------------------------------------
-// MyIssuesHeader
-// ---------------------------------------------------------------------------
-
 export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
+  const { t } = useLocale();
   const viewMode = useStore(myIssuesViewStore, (s) => s.viewMode);
   const statusFilters = useStore(myIssuesViewStore, (s) => s.statusFilters);
   const priorityFilters = useStore(myIssuesViewStore, (s) => s.priorityFilters);
@@ -119,6 +111,12 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
   const scope = useStore(myIssuesViewStore, (s) => s.scope);
   const act = myIssuesViewStore.getState();
 
+  const SCOPES: { value: MyIssuesScope; label: string; description: string }[] = [
+    { value: "assigned", label: t.myIssues.tabs.assigned, description: t.myIssues.tabs.assigned },
+    { value: "created", label: t.myIssues.tabs.created, description: t.myIssues.tabs.created },
+    { value: "agents", label: t.myIssues.tabs.agents, description: t.myIssues.tabs.agents },
+  ];
+
   const counts = useIssueCounts(allIssues);
 
   const hasActiveFilters =
@@ -126,6 +124,18 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
 
   const sortLabel =
     SORT_OPTIONS.find((o) => o.value === sortBy)?.label ?? "Manual";
+
+  const getSortLabel = (val: string) => {
+    const key = SORT_OPTIONS.find((o) => o.value === val)?.label;
+    if (!key) return "Manual";
+    return (t.issues.sorting as any)[key] ?? key;
+  };
+
+  const getCardPropLabel = (key: string) => {
+    const label = CARD_PROPERTY_OPTIONS.find((o) => o.key === key)?.label;
+    if (!label) return key;
+    return (t.issues.cardProperties as any)[label] ?? label;
+  };
 
   return (
     <div className="flex h-12 shrink-0 items-center justify-between px-4">
@@ -173,14 +183,14 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                 />
               }
             />
-            <TooltipContent side="bottom">Filter</TooltipContent>
+            <TooltipContent side="bottom">{t.myIssues.filter}</TooltipContent>
           </Tooltip>
           <DropdownMenuContent align="end" className="w-auto">
             {/* Status */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <CircleDot className="size-3.5" />
-                <span className="flex-1">Status</span>
+                <span className="flex-1">{t.issues.status}</span>
                 {statusFilters.length > 0 && (
                   <span className="text-xs text-primary font-medium">
                     {statusFilters.length}
@@ -200,10 +210,10 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                     >
                       <HoverCheck checked={checked} />
                       <StatusIcon status={s} className="h-3.5 w-3.5" />
-                      {STATUS_CONFIG[s].label}
+                      {t.issues.status[s]}
                       {count > 0 && (
                         <span className="ml-auto text-xs text-muted-foreground">
-                          {count} {count === 1 ? "issue" : "issues"}
+                          {count} {count === 1 ? t.myIssues.issueCount.replace("{n}", "") : t.myIssues.issuesCount.replace("{n}", count.toString())}
                         </span>
                       )}
                     </DropdownMenuCheckboxItem>
@@ -216,7 +226,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <SignalHigh className="size-3.5" />
-                <span className="flex-1">Priority</span>
+                <span className="flex-1">{t.issues.priority}</span>
                 {priorityFilters.length > 0 && (
                   <span className="text-xs text-primary font-medium">
                     {priorityFilters.length}
@@ -236,10 +246,10 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                     >
                       <HoverCheck checked={checked} />
                       <PriorityIcon priority={p} />
-                      {PRIORITY_CONFIG[p].label}
+                      {t.issues.priority[p]}
                       {count > 0 && (
                         <span className="ml-auto text-xs text-muted-foreground">
-                          {count} {count === 1 ? "issue" : "issues"}
+                          {count} {count === 1 ? t.myIssues.issueCount.replace("{n}", "") : t.myIssues.issuesCount.replace("{n}", count.toString())}
                         </span>
                       )}
                     </DropdownMenuCheckboxItem>
@@ -253,7 +263,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={act.clearFilters}>
-                  Reset all filters
+                  {t.myIssues.resetFilters}
                 </DropdownMenuItem>
               </>
             )}
@@ -274,12 +284,12 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                 />
               }
             />
-            <TooltipContent side="bottom">Display settings</TooltipContent>
+            <TooltipContent side="bottom">{t.myIssues.displaySettings}</TooltipContent>
           </Tooltip>
           <PopoverContent align="end" className="w-64 p-0">
             <div className="border-b px-3 py-2.5">
               <span className="text-xs font-medium text-muted-foreground">
-                Ordering
+                {t.myIssues.ordering}
               </span>
               <div className="mt-2 flex items-center gap-1.5">
                 <DropdownMenu>
@@ -290,7 +300,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                         size="sm"
                         className="flex-1 justify-between text-xs"
                       >
-                        {sortLabel}
+                        {getSortLabel(sortBy)}
                         <ChevronDown className="size-3 text-muted-foreground" />
                       </Button>
                     }
@@ -301,7 +311,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                         key={opt.value}
                         onClick={() => act.setSortBy(opt.value)}
                       >
-                        {opt.label}
+                        {getSortLabel(opt.value)}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -314,7 +324,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                       sortDirection === "asc" ? "desc" : "asc",
                     )
                   }
-                  title={sortDirection === "asc" ? "Ascending" : "Descending"}
+                  title={sortDirection === "asc" ? t.myIssues.ascending : t.myIssues.descending}
                 >
                   {sortDirection === "asc" ? (
                     <ArrowUp className="size-3.5" />
@@ -327,7 +337,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
 
             <div className="px-3 py-2.5">
               <span className="text-xs font-medium text-muted-foreground">
-                Card properties
+                {t.myIssues.cardProperties}
               </span>
               <div className="mt-2 space-y-2">
                 {CARD_PROPERTY_OPTIONS.map((opt) => (
@@ -335,7 +345,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                     key={opt.key}
                     className="flex cursor-pointer items-center justify-between"
                   >
-                    <span className="text-sm">{opt.label}</span>
+                    <span className="text-sm">{getCardPropLabel(opt.key)}</span>
                     <Switch
                       size="sm"
                       checked={cardProperties[opt.key]}
@@ -367,19 +377,19 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
               }
             />
             <TooltipContent side="bottom">
-              {viewMode === "board" ? "Board view" : "List view"}
+              {viewMode === "board" ? t.myIssues.boardView : t.myIssues.listView}
             </TooltipContent>
           </Tooltip>
           <DropdownMenuContent align="end" className="w-auto">
             <DropdownMenuGroup>
-              <DropdownMenuLabel>View</DropdownMenuLabel>
+              <DropdownMenuLabel>{t.myIssues.view}</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => act.setViewMode("board")}>
                 <Columns3 />
-                Board
+                {t.myIssues.board}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => act.setViewMode("list")}>
                 <List />
-                List
+                {t.myIssues.list}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

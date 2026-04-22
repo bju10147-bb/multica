@@ -19,7 +19,7 @@ import { BoardView } from "../../issues/components/board-view";
 import { ListView } from "../../issues/components/list-view";
 import { BatchActionToolbar } from "../../issues/components/batch-action-toolbar";
 import { useClearFiltersOnWorkspaceChange } from "@multica/core/issues/stores/view-store";
-import { useWorkspaceId } from "@multica/core/hooks";
+import { useWorkspaceId, useLocale } from "@multica/core";
 import { myIssueListOptions, childIssueProgressOptions, type MyIssuesFilter } from "@multica/core/issues/queries";
 import { useUpdateIssue, useLoadMoreDoneIssues } from "@multica/core/issues/mutations";
 import { myIssuesViewStore } from "@multica/core/issues/stores/my-issues-view-store";
@@ -27,6 +27,7 @@ import { PageHeader } from "../../layout/page-header";
 import { MyIssuesHeader } from "./my-issues-header";
 
 export function MyIssuesPage() {
+  const { t } = useLocale();
   const user = useAuthStore((s) => s.user);
   const workspace = useCurrentWorkspace();
   const wsId = useWorkspaceId();
@@ -116,10 +117,10 @@ export function MyIssuesPage() {
 
       updateIssueMutation.mutate(
         { id: issueId, ...updates },
-        { onError: () => toast.error("Failed to move issue") },
+        { onError: () => toast.error(t.myIssues.failedToMove) },
       );
     },
-    [updateIssueMutation],
+    [updateIssueMutation, t],
   );
 
   if (loading) {
@@ -155,7 +156,7 @@ export function MyIssuesPage() {
           {workspace?.name ?? "Workspace"}
         </span>
         <ChevronRight className="h-3 w-3 text-muted-foreground" />
-        <span className="text-sm font-medium">My Issues</span>
+        <span className="text-sm font-medium">{t.myIssues.title}</span>
       </PageHeader>
 
       {/* Header: scope tabs (left) + controls (right) */}
@@ -164,10 +165,10 @@ export function MyIssuesPage() {
       {/* Content: scrollable */}
       <ViewStoreProvider store={myIssuesViewStore}>
         {myIssues.length === 0 ? (
-          <div className="flex flex-1 min-h-0 flex-col items-center justify-center gap-2 text-muted-foreground">
+          <div className="flex flex-1 min-h-0 flex-col items-center justify-center gap-2 text-muted-foreground text-center px-4">
             <ListTodo className="h-10 w-10 text-muted-foreground/40" />
-            <p className="text-sm">No issues assigned to you</p>
-            <p className="text-xs">Issues you create or are assigned to will appear here.</p>
+            <p className="text-sm">{t.myIssues.noIssues}</p>
+            <p className="text-xs">{t.myIssues.noIssuesDesc}</p>
           </div>
         ) : (
           <div className="flex flex-col flex-1 min-h-0">

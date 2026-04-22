@@ -7,9 +7,14 @@ cd "$REPO_ROOT"
 # ---------- Check prerequisites ----------
 missing=()
 command -v node >/dev/null 2>&1 || missing+=("node")
-command -v pnpm >/dev/null 2>&1 || missing+=("pnpm")
 command -v go >/dev/null 2>&1 || missing+=("go")
 command -v docker >/dev/null 2>&1 || missing+=("docker")
+
+PNPM="$(cd "$(dirname "$0")" && pwd)/pnpm.sh"
+if [ ! -x "$PNPM" ]; then
+  echo "✗ Missing pnpm helper: $PNPM"
+  exit 1
+fi
 
 if [ ${#missing[@]} -gt 0 ]; then
   echo "✗ Missing prerequisites: ${missing[*]}"
@@ -43,7 +48,7 @@ set +a
 # ---------- Install dependencies ----------
 if [ ! -d node_modules ]; then
   echo "==> Installing dependencies..."
-  pnpm install
+  "$PNPM" install
 fi
 
 # ---------- Database ----------
@@ -61,5 +66,5 @@ echo ""
 
 trap 'kill 0' EXIT
 (cd server && go run ./cmd/server) &
-pnpm dev:web &
+"$PNPM" dev:web &
 wait

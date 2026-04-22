@@ -3,9 +3,10 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { en } from "./en";
 import { zh } from "./zh";
+import { ko } from "./ko";
 import type { LandingDict, Locale } from "./types";
 
-const dictionaries: Record<Locale, LandingDict> = { en, zh };
+const dictionaries: Record<Locale, LandingDict> = { ko, en, zh };
 
 const COOKIE_NAME = "multica-locale";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
@@ -20,7 +21,7 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({
   children,
-  initialLocale = "en",
+  initialLocale = "ko",
 }: {
   children: React.ReactNode;
   initialLocale?: Locale;

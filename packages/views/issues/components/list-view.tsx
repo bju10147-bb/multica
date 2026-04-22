@@ -16,6 +16,7 @@ import { sortIssues } from "../utils/sort";
 import { StatusIcon } from "./status-icon";
 import { ListRow, type ChildProgress } from "./list-row";
 import { InfiniteScrollSentinel } from "./infinite-scroll-sentinel";
+import { useLocale } from "@multica/core";
 
 const EMPTY_PROGRESS_MAP = new Map<string, ChildProgress>();
 
@@ -36,6 +37,7 @@ export function ListView({
   myIssuesScope?: string;
   myIssuesFilter?: MyIssuesFilter;
 }) {
+  const { t } = useLocale();
   const sortBy = useViewStore((s) => s.sortBy);
   const sortDirection = useViewStore((s) => s.sortDirection);
   const listCollapsedStatuses = useViewStore(
@@ -117,7 +119,7 @@ export function ListView({
                   <ChevronRight className="size-3.5 shrink-0 text-muted-foreground transition-transform group-aria-expanded/trigger:rotate-90" />
                   <span className={`inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-xs font-semibold ${cfg.badgeBg} ${cfg.badgeText}`}>
                     <StatusIcon status={status} className="h-3 w-3" inheritColor />
-                    {cfg.label}
+                    {t.issues.status[status]}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {status === "done" ? displayDoneTotal : statusIssues.length}
@@ -141,7 +143,7 @@ export function ListView({
                     >
                       <Plus className="size-3.5" />
                     </TooltipTrigger>
-                    <TooltipContent>Add issue</TooltipContent>
+                    <TooltipContent>{t.issues.header.addIssue}</TooltipContent>
                   </Tooltip>
                 </div>
               </Accordion.Header>
@@ -157,7 +159,7 @@ export function ListView({
                   </>
                 ) : (
                   <p className="py-6 text-center text-xs text-muted-foreground">
-                    No issues
+                    {t.issues.header.noIssues}
                   </p>
                 )}
               </Accordion.Panel>

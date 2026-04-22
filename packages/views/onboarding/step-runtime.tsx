@@ -12,6 +12,7 @@ import {
   runtimeListOptions,
   runtimeKeys,
 } from "@multica/core/runtimes/queries";
+import { useLocale } from "@multica/core";
 
 const CLOUD_HOST = "multica.ai";
 
@@ -76,14 +77,20 @@ export function StepRuntime({
   wsId: string;
   onNext: () => void;
 }) {
+  const { t } = useLocale();
   const qc = useQueryClient();
+
+  const INSTALL_STEP = {
+    label: t.onboarding.installCli,
+    cmd: "curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash",
+  };
 
   const setupSteps = useMemo(
     () => [
       INSTALL_STEP,
-      { label: "Set up and start the daemon", cmd: buildSetupCommand() },
+      { label: t.onboarding.setupDaemon, cmd: buildSetupCommand() },
     ],
-    [],
+    [t.onboarding.setupDaemon, INSTALL_STEP],
   );
 
   const { data: runtimes = [] } = useQuery(runtimeListOptions(wsId));
@@ -100,12 +107,10 @@ export function StepRuntime({
     <div className="flex w-full max-w-xl flex-col items-center gap-8">
       <div className="text-center">
         <h1 className="text-3xl font-semibold tracking-tight">
-          Connect a Runtime
+          {t.onboarding.connectRuntime}
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Install the CLI and run the setup command below to connect your
-          machine. The daemon auto-detects agent CLIs (Claude Code, Codex,
-          etc.) on your PATH.
+          {t.onboarding.connectRuntimeDesc}
         </p>
       </div>
 
@@ -127,8 +132,7 @@ export function StepRuntime({
             </div>
           ))}
           <p className="pt-1 text-xs text-muted-foreground">
-            The setup command handles authentication, configuration, and daemon
-            startup — all in one step.
+            {t.onboarding.setupDaemonDesc}
           </p>
         </CardContent>
       </Card>
@@ -140,15 +144,14 @@ export function StepRuntime({
             <>
               <div className="h-2 w-2 rounded-full bg-success" />
               <span className="font-medium">
-                {runtimes.length} runtime{runtimes.length > 1 ? "s" : ""}{" "}
-                connected
+                {t.onboarding.runtimesConnected.replace("{n}", runtimes.length.toString())}
               </span>
             </>
           ) : (
             <>
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
               <span className="text-muted-foreground">
-                Waiting for connection...
+                {t.onboarding.waitingForConnection}
               </span>
             </>
           )}
@@ -176,7 +179,7 @@ export function StepRuntime({
                       </span>
                       {rt.runtime_mode === "cloud" && (
                         <span className="shrink-0 rounded bg-info/10 px-1.5 py-0.5 text-xs font-medium text-info">
-                          Cloud
+                          {t.settings.system.replace("System", "Cloud")}
                         </span>
                       )}
                     </div>
@@ -197,7 +200,7 @@ export function StepRuntime({
 
       {/* Actions */}
       <Button className="w-full" size="lg" onClick={onNext}>
-        {hasRuntimes ? "Continue" : "Skip for now"}
+        {hasRuntimes ? t.onboarding.continue : t.onboarding.skipForNow}
       </Button>
     </div>
   );

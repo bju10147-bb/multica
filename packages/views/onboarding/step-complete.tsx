@@ -5,87 +5,14 @@ import { Check, ArrowRight, Loader2, Bot } from "lucide-react";
 import { Button } from "@multica/ui/components/ui/button";
 import { Card } from "@multica/ui/components/ui/card";
 import { api } from "@multica/core/api";
+import { useLocale } from "@multica/core";
 import type { Agent, Issue, CreateIssueRequest } from "@multica/core/types";
 
 interface OnboardingIssueDef {
   title: string;
   description: string;
-  /** If true, assigned to the agent with status "todo" so it gets picked up */
   assignToAgent: boolean;
   status: "todo" | "backlog";
-}
-
-function getOnboardingIssues(): OnboardingIssueDef[] {
-  return [
-    {
-      title: "Say hello to the team!",
-      description: [
-        "Welcome! This is your first automated task.",
-        "",
-        "Please introduce yourself to the team:",
-        "- What's your name and role in this workspace?",
-        "- What kinds of tasks can you help with?",
-        "- Give 2–3 concrete examples of things the team can ask you to do",
-        "",
-        "---",
-        "",
-        "**Try it out!** After the agent responds, reply with one of these to see it in action:",
-        '- "Review this function for bugs: `function add(a, b) { return a - b; }`"',
-        '- "Draft a short description for a new onboarding feature"',
-        '- "What are some best practices for writing clean commit messages?"',
-        "",
-        "This issue was automatically assigned to verify your agent is working end-to-end.",
-      ].join("\n"),
-      assignToAgent: true,
-      status: "todo",
-    },
-    {
-      title: "Set up your repository connection",
-      description: [
-        "Connect a code repository so agents can check out code and submit pull requests.",
-        "",
-        "**Steps:**",
-        "1. Go to **Settings** in the sidebar",
-        "2. Under **Repositories**, add a Git repository URL",
-        "3. The agent daemon will sync the repo locally",
-        "",
-        "Once connected, your agents can clone, branch, and push code as part of any task.",
-      ].join("\n"),
-      assignToAgent: false,
-      status: "backlog",
-    },
-    {
-      title: "Create a skill for your agent",
-      description: [
-        "Skills are reusable instructions that make agents better at recurring tasks — deployments, code reviews, migrations, etc.",
-        "",
-        "**Note:** Skills already installed in your local runtime (e.g., `.claude/skills/`) are automatically available to agents — no need to re-upload them. Workspace skills here are for sharing knowledge across your team.",
-        "",
-        "**Steps:**",
-        "1. Go to **Skills** in the sidebar",
-        "2. Click **New Skill**",
-        "3. Write a description and instructions (e.g., \"Code Review\" with your team's style guide)",
-        "4. Assign the skill to an agent in the agent's settings",
-        "",
-        "Every skill you create compounds your team's capabilities over time.",
-      ].join("\n"),
-      assignToAgent: false,
-      status: "backlog",
-    },
-    {
-      title: "Invite a teammate",
-      description: [
-        "Multica works best with a team. Invite a colleague to your workspace so you can collaborate on issues and share agents.",
-        "",
-        "**Steps:**",
-        "1. Go to **Settings → Members**",
-        "2. Click **Invite** and enter their email",
-        "3. They'll get access to the workspace, all agents, and the issue board",
-      ].join("\n"),
-      assignToAgent: false,
-      status: "backlog",
-    },
-  ];
 }
 
 export function StepComplete({
@@ -97,6 +24,37 @@ export function StepComplete({
   agent: Agent | null;
   onEnter: () => void;
 }) {
+  const { t } = useLocale();
+
+  function getOnboardingIssues(): OnboardingIssueDef[] {
+    return [
+      {
+        title: t.onboarding.onboardingIssues.hello.title,
+        description: t.onboarding.onboardingIssues.hello.desc,
+        assignToAgent: true,
+        status: "todo",
+      },
+      {
+        title: t.onboarding.onboardingIssues.repo.title,
+        description: t.onboarding.onboardingIssues.repo.desc,
+        assignToAgent: false,
+        status: "backlog",
+      },
+      {
+        title: t.onboarding.onboardingIssues.skill.title,
+        description: t.onboarding.onboardingIssues.skill.desc,
+        assignToAgent: false,
+        status: "backlog",
+      },
+      {
+        title: t.onboarding.onboardingIssues.team.title,
+        description: t.onboarding.onboardingIssues.team.desc,
+        assignToAgent: false,
+        status: "backlog",
+      },
+    ];
+  }
+
   const [createdIssues, setCreatedIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const didCreate = useRef(false);
@@ -143,12 +101,12 @@ export function StepComplete({
 
       <div className="text-center">
         <h1 className="text-3xl font-semibold tracking-tight">
-          You&apos;re all set!
+          {t.onboarding.allSet}
         </h1>
         <p className="mt-2 text-muted-foreground">
           {agent
-            ? `Your workspace is ready and ${agent.name} is picking up its first task.`
-            : "Your workspace is ready. Create issues and assign them to agents to get started."}
+            ? t.onboarding.workspaceReadyWithAgent.replace("{name}", agent.name)
+            : t.onboarding.workspaceReadyNoAgent}
         </p>
       </div>
 
@@ -156,7 +114,7 @@ export function StepComplete({
       {loading ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Setting up your workspace...</span>
+          <span>{t.onboarding.settingUpWorkspace}</span>
         </div>
       ) : (
         createdIssues.length > 0 && (
@@ -172,10 +130,10 @@ export function StepComplete({
                   </div>
                   <div className="truncate text-xs text-muted-foreground">
                     {issue.assignee_id && agent
-                      ? `Assigned to ${agent.name}`
+                      ? t.onboarding.assignedToAgent.replace("{name}", agent.name)
                       : issue.status === "todo"
-                        ? "To do"
-                        : "Backlog"}
+                        ? t.onboarding.todo
+                        : t.onboarding.backlog}
                   </div>
                 </div>
                 {issue.assignee_id && agent && (
@@ -195,7 +153,7 @@ export function StepComplete({
         onClick={onEnter}
         disabled={loading}
       >
-        Go to Workspace
+        {t.onboarding.goToWorkspace}
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
     </div>

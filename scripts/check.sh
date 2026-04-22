@@ -18,6 +18,12 @@ set -a
 . "$ENV_FILE"
 set +a
 
+PNPM="$(cd "$(dirname "$0")" && pwd)/pnpm.sh"
+if [ ! -x "$PNPM" ]; then
+  echo "Missing pnpm helper: $PNPM"
+  exit 1
+fi
+
 POSTGRES_DB="${POSTGRES_DB:-multica}"
 POSTGRES_USER="${POSTGRES_USER:-multica}"
 POSTGRES_PORT="${POSTGRES_PORT:-5432}"
@@ -86,14 +92,14 @@ bash scripts/ensure-postgres.sh "$ENV_FILE"
 # --------------------------------------------------------------------------
 echo ""
 echo "==> [1/5] TypeScript typecheck..."
-pnpm typecheck || { EXIT_CODE=1; exit 1; }
+"$PNPM" typecheck || { EXIT_CODE=1; exit 1; }
 
 # --------------------------------------------------------------------------
 # Step 2: TypeScript unit tests (Vitest)
 # --------------------------------------------------------------------------
 echo ""
 echo "==> [2/5] TypeScript unit tests..."
-pnpm test || { EXIT_CODE=1; exit 1; }
+"$PNPM" test || { EXIT_CODE=1; exit 1; }
 
 # --------------------------------------------------------------------------
 # Step 3: Go tests
@@ -124,7 +130,7 @@ if curl -sf "http://localhost:${FRONTEND_PORT}" > /dev/null 2>&1; then
   echo "    Frontend already running on :$FRONTEND_PORT"
 else
   echo "    Starting frontend..."
-  pnpm dev:web > /tmp/multica-check-frontend.log 2>&1 &
+  "$PNPM" dev:web > /tmp/multica-check-frontend.log 2>&1 &
   FRONTEND_PID=$!
   STARTED_FRONTEND=true
   wait_for_port "$FRONTEND_PORT" "Frontend" 120 "/"
@@ -135,4 +141,4 @@ fi
 # --------------------------------------------------------------------------
 echo ""
 echo "==> [5/5] E2E tests (Playwright)..."
-pnpm exec playwright test || { EXIT_CODE=1; exit 1; }
+"$PNPM" exec playwright test || { EXIT_CODE=1; exit 1; }

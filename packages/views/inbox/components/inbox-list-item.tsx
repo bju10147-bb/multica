@@ -6,15 +6,17 @@ import { Archive } from "lucide-react";
 import type { InboxItem } from "@multica/core/types";
 import { InboxDetailLabel } from "./inbox-detail-label";
 
-function timeAgo(dateStr: string): string {
+import { useLocale } from "@multica/core";
+
+function timeAgo(dateStr: string, t: any): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return "just now";
-  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 1) return t.inbox.justNow;
+  if (minutes < 60) return t.inbox.minutesAgoShort.replace("{n}", minutes.toString());
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
+  if (hours < 24) return t.inbox.hoursAgoShort.replace("{n}", hours.toString());
   const days = Math.floor(hours / 24);
-  return `${days}d`;
+  return t.inbox.daysAgoShort.replace("{n}", days.toString());
 }
 
 export { timeAgo };
@@ -30,6 +32,7 @@ export function InboxListItem({
   onClick: () => void;
   onArchive: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <button
       onClick={onClick}
@@ -58,7 +61,7 @@ export function InboxListItem({
             <span
               role="button"
               tabIndex={-1}
-              title="Archive"
+              title={t.inbox.archive}
               onClick={(e) => {
                 e.stopPropagation();
                 onArchive();
@@ -83,7 +86,7 @@ export function InboxListItem({
             <InboxDetailLabel item={item} />
           </p>
           <span className={`shrink-0 text-xs ${item.read ? "text-muted-foreground/60" : "text-muted-foreground"}`}>
-            {timeAgo(item.created_at)}
+            {timeAgo(item.created_at, t)}
           </span>
         </div>
       </div>

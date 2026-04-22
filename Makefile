@@ -25,6 +25,7 @@ MULTICA_SERVER_URL ?= ws://localhost:$(PORT)/ws
 export
 
 MULTICA_ARGS ?= $(ARGS)
+PNPM := ./scripts/pnpm.sh
 
 COMPOSE := docker compose
 
@@ -90,7 +91,7 @@ setup:
 	$(REQUIRE_ENV)
 	@echo "==> Using env file: $(ENV_FILE)"
 	@echo "==> Installing dependencies..."
-	pnpm install
+	$(PNPM) install
 	@bash scripts/ensure-postgres.sh "$(ENV_FILE)"
 	@echo "==> Running migrations..."
 	cd server && go run ./cmd/migrate up
@@ -109,7 +110,7 @@ start:
 	@echo "Starting backend and frontend..."
 	@trap 'kill 0' EXIT; \
 		(cd server && go run ./cmd/server) & \
-		pnpm dev:web & \
+		$(PNPM) dev:web & \
 		wait
 
 # Stop all services

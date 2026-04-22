@@ -8,14 +8,15 @@ import { useIssueSelectionStore } from "@multica/core/issues/stores/selection-st
 import { useWorkspacePaths } from "@multica/core/paths";
 import { PriorityIcon } from "./priority-icon";
 import { ProgressRing } from "./progress-ring";
+import { useLocale } from "@multica/core";
 
 export interface ChildProgress {
   done: number;
   total: number;
 }
 
-function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString("en-US", {
+function formatDate(date: string, locale: string): string {
+  return new Date(date).toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
   });
@@ -28,6 +29,7 @@ export const ListRow = memo(function ListRow({
   issue: Issue;
   childProgress?: ChildProgress;
 }) {
+  const { locale } = useLocale();
   const selected = useIssueSelectionStore((s) => s.selectedIds.has(issue.id));
   const toggle = useIssueSelectionStore((s) => s.toggle);
   const p = useWorkspacePaths();
@@ -72,7 +74,7 @@ export const ListRow = memo(function ListRow({
         </span>
         {issue.due_date && (
           <span className="shrink-0 text-xs text-muted-foreground">
-            {formatDate(issue.due_date)}
+            {formatDate(issue.due_date, locale === "ko" ? "ko-KR" : "en-US")}
           </span>
         )}
         {issue.assignee_type && issue.assignee_id && (

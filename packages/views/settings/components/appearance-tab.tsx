@@ -2,6 +2,16 @@
 
 import { useTheme } from "@multica/ui/components/common/theme-provider";
 import { cn } from "@multica/ui/lib/utils";
+import { useLocale } from "@multica/core";
+import type { Locale } from "@multica/core/i18n/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@multica/ui/components/ui/dropdown-menu";
+import { Button } from "@multica/ui/components/ui/button";
+import { ChevronDown, Languages } from "lucide-react";
 
 const LIGHT_COLORS = {
   titleBar: "#e8e8e8",
@@ -86,11 +96,24 @@ const themeOptions = [
 
 export function AppearanceTab() {
   const { theme, setTheme } = useTheme();
+  const { locale, setLocale, t } = useLocale();
+
+  const themeOptions = [
+    { value: "light" as const, label: t.settings.light },
+    { value: "dark" as const, label: t.settings.dark },
+    { value: "system" as const, label: t.settings.system },
+  ];
+
+  const languages: { value: Locale; label: string }[] = [
+    { value: "ko", label: t.settings.ko },
+    { value: "en", label: t.settings.en },
+    { value: "zh", label: t.settings.zh },
+  ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold">Theme</h2>
+        <h2 className="text-sm font-semibold">{t.settings.theme}</h2>
         <div className="flex gap-6" role="radiogroup" aria-label="Theme">
           {themeOptions.map((opt) => {
             const active = theme === opt.value;
@@ -140,6 +163,33 @@ export function AppearanceTab() {
             );
           })}
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold">{t.settings.language}</h2>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-48 justify-between">
+              <span className="flex items-center gap-2">
+                <Languages className="size-4 text-muted-foreground" />
+                {languages.find((l) => l.value === locale)?.label || locale}
+              </span>
+              <ChevronDown className="size-4 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            {languages.map((l) => (
+              <DropdownMenuItem
+                key={l.value}
+                onClick={() => setLocale(l.value)}
+                className="justify-between"
+              >
+                {l.label}
+                {locale === l.value && <span className="text-xs text-muted-foreground">✓</span>}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </section>
     </div>
   );

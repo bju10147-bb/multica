@@ -67,7 +67,7 @@ function groupItems(items: MentionItem[]): MentionGroup[] {
 
   const groups: MentionGroup[] = [];
   if (users.length > 0) groups.push({ label: "Users", items: users });
-  if (issues.length > 0) groups.push({ label: "Issues", items: issues });
+  if (issues.length > 0) groups.push({ label: "이슈", items: issues });
   return groups;
 }
 
@@ -117,7 +117,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
     if (items.length === 0) {
       return (
         <div className="rounded-md border bg-popover p-2 text-xs text-muted-foreground shadow-md">
-          No results
+          검색 결과 없음
         </div>
       );
     }

@@ -1,7 +1,9 @@
+import React from "react";
 import { Server, ArrowUpCircle, ChevronDown, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { AgentRuntime, MemberWithUser } from "@multica/core/types";
 import { useWorkspaceId } from "@multica/core/hooks";
+import { useLocale } from "@multica/core";
 import { memberListOptions } from "@multica/core/workspace/queries";
 import {
   DropdownMenu,
@@ -29,6 +31,7 @@ function RuntimeListItem({
   hasUpdate: boolean;
   onClick: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <button
       onClick={onClick}
@@ -58,7 +61,7 @@ function RuntimeListItem({
       </div>
       <div className="flex items-center gap-1.5 shrink-0">
         {hasUpdate && (
-          <span title="Update available">
+          <span title={t.runtimes.updateAvailable}>
             <ArrowUpCircle className="h-3.5 w-3.5 text-info" />
           </span>
         )}
@@ -91,6 +94,7 @@ export function RuntimeList({
   onOwnerFilterChange: (ownerId: string | null) => void;
   updatableIds?: Set<string>;
 }) {
+  const { t } = useLocale();
   const wsId = useWorkspaceId();
   const { data: members = [] } = useQuery(memberListOptions(wsId));
 
@@ -122,10 +126,10 @@ export function RuntimeList({
   return (
     <div className="overflow-y-auto h-full border-r">
       <PageHeader className="justify-between">
-        <h1 className="text-sm font-semibold">Runtimes</h1>
+        <h1 className="text-sm font-semibold">{t.runtimes.title}</h1>
         <span className="text-xs text-muted-foreground">
           {filteredRuntimes.filter((r) => r.status === "online").length}/
-          {filteredRuntimes.length} online
+          {filteredRuntimes.length} {t.runtimes.online}
         </span>
       </PageHeader>
 
@@ -141,7 +145,7 @@ export function RuntimeList({
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Mine
+            {t.runtimes.mine}
           </button>
           <button
             onClick={() => { onFilterChange("all"); onOwnerFilterChange(null); }}
@@ -151,7 +155,7 @@ export function RuntimeList({
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            All
+            {t.runtimes.all}
           </button>
         </div>
 
@@ -169,7 +173,7 @@ export function RuntimeList({
                   <span className="max-w-20 truncate">{selectedOwner.name}</span>
                 </>
               ) : (
-                <span>Owner</span>
+                <span>{t.runtimes.owner}</span>
               )}
               <ChevronDown className="h-3 w-3 opacity-50" />
             </DropdownMenuTrigger>
@@ -178,7 +182,7 @@ export function RuntimeList({
                 onClick={() => onOwnerFilterChange(null)}
                 className="flex items-center justify-between"
               >
-                <span className="text-xs">All owners</span>
+                <span className="text-xs">{t.runtimes.allOwners}</span>
                 {!ownerFilter && <Check className="h-3.5 w-3.5 text-foreground" />}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -204,15 +208,20 @@ export function RuntimeList({
       {filteredRuntimes.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-4 py-12">
           <Server className="h-8 w-8 text-muted-foreground/40" />
-          <p className="mt-3 text-sm text-muted-foreground">
-            {filter === "mine" ? "No runtimes owned by you" : ownerFilter ? "No runtimes for this owner" : "No runtimes registered"}
+          <p className="mt-3 text-sm text-muted-foreground text-center">
+            {filter === "mine" ? t.runtimes.noMine : ownerFilter ? t.runtimes.noOwner : t.runtimes.noRegistered}
           </p>
           <p className="mt-1 text-xs text-muted-foreground text-center">
-            Run{" "}
-            <code className="rounded bg-muted px-1 py-0.5">
-              multica daemon start
-            </code>{" "}
-            to register a local runtime.
+            {t.runtimes.daemonStartCmd.split("{cmd}").map((part, i, arr) => (
+              <React.Fragment key={i}>
+                {part}
+                {i < arr.length - 1 && (
+                  <code className="rounded bg-muted px-1 py-0.5">
+                    multica daemon start
+                  </code>
+                )}
+              </React.Fragment>
+            ))}
           </p>
         </div>
       ) : (

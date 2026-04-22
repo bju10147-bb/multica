@@ -8,13 +8,7 @@ import { StepWorkspace } from "./step-workspace";
 import { StepRuntime } from "./step-runtime";
 import { StepAgent } from "./step-agent";
 import { StepComplete } from "./step-complete";
-
-const STEPS = [
-  { label: "Workspace" },
-  { label: "Runtime" },
-  { label: "Agent" },
-  { label: "Get Started" },
-] as const;
+import { useLocale } from "@multica/core";
 
 export interface OnboardingWizardProps {
   /**
@@ -26,6 +20,15 @@ export interface OnboardingWizardProps {
 }
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
+  const { t } = useLocale();
+
+  const STEPS = [
+    { label: t.onboarding.stepWorkspace },
+    { label: t.onboarding.stepRuntime },
+    { label: t.onboarding.stepAgent },
+    { label: t.onboarding.stepComplete },
+  ] as const;
+
   // Canonical source for workspace existence: the React Query list cache. The
   // onboarding route itself is global (no slug in URL), so useCurrentWorkspace
   // can't help here — we read the list directly. `useCreateWorkspace` adds the

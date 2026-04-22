@@ -25,19 +25,19 @@ export interface ActorFilterValue {
   id: string;
 }
 
-export const SORT_OPTIONS: { value: SortField; label: string }[] = [
-  { value: "position", label: "Manual" },
-  { value: "priority", label: "Priority" },
-  { value: "due_date", label: "Due date" },
-  { value: "created_at", label: "Created date" },
-  { value: "title", label: "Title" },
+export const SORT_OPTIONS: { value: SortField; labelKey: keyof Dictionary["issues"]["sorting"] }[] = [
+  { value: "position", labelKey: "manual" },
+  { value: "priority", labelKey: "priority" },
+  { value: "due_date", labelKey: "due_date" },
+  { value: "created_at", labelKey: "created" },
+  { value: "title", labelKey: "title" },
 ];
 
-export const CARD_PROPERTY_OPTIONS: { key: keyof CardProperties; label: string }[] = [
-  { key: "priority", label: "Priority" },
-  { key: "description", label: "Description" },
-  { key: "assignee", label: "Assignee" },
-  { key: "dueDate", label: "Due date" },
+export const CARD_PROPERTY_OPTIONS: { key: keyof CardProperties; labelKey: keyof Dictionary["issues"]["cardProperties"] }[] = [
+  { key: "priority", labelKey: "priority" },
+  { key: "description", labelKey: "description" },
+  { key: "assignee", labelKey: "assignee" },
+  { key: "dueDate", labelKey: "due_date" },
 ];
 
 export interface IssueViewState {
