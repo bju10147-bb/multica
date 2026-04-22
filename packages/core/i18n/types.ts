@@ -523,6 +523,26 @@ export type Dictionary = {
       failedAt: string;
       queuedAt: string;
     };
+    dialog: {
+      createAgent: string;
+      createDesc: string;
+      nameLabel: string;
+      namePlaceholder: string;
+      descLabel: string;
+      descPlaceholder: string;
+      visibilityLabel: string;
+      visibilityWorkspace: string;
+      visibilityWorkspaceDesc: string;
+      visibilityPrivate: string;
+      visibilityPrivateDesc: string;
+      runtimeLabel: string;
+      runtimeMine: string;
+      runtimeAll: string;
+      loadingRuntimes: string;
+      noRuntime: string;
+      registerRuntime: string;
+      failedToCreate: string;
+    };
     empty: {
       noArchived: string;
       noActive: string;
